@@ -1,4 +1,4 @@
-name: Docker Build and Push
+name: Docker Build, Test, and Push
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main 
 
 jobs:
-  build-and-push:
+  build-test-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +24,25 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/simple-site-demo:latest .
+
+      - name: Test Docker image
+        run: |
+          # Run the Docker container in detached mode
+          docker run -d -p 3000:80 --name test-container ${{ secrets.DOCKER_HUB_USERNAME }}/simple-site-demo:latest
+          # Wait for the container to start
+          sleep 10
+          # Use curl to test the container
+          curl_output=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3000)
+          # Check if the response is 200 (success)
+          if [ "$curl_output" -eq 200 ]; then
+            echo "Test passed: Container is serving content successfully."
+          else
+            echo "Test failed: Container is not serving content as expected."
+            exit 1
+          fi
+          # Stop and remove the container
+          docker stop test-container
+          docker rm test-container
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/simple-site-demo:latest
