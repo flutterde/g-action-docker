@@ -30,7 +30,7 @@ jobs:
           # Run the Docker container in detached mode
           docker run -d -p 3000:80 --name test-container ${{ secrets.DOCKER_HUB_USERNAME }}/simple-site-demo:latest
           # Wait for the container to start
-          sleep 10
+          sleep 20
           # Use curl to test the container
           curl_output=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3000)
           # Check if the response is 200 (success)
