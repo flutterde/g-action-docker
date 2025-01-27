@@ -1,10 +1,7 @@
-FROM alpine:3.20
+FROM nginx:1.17.1-alpine
 
-
-RUN apk update && apk add nginx
+RUN rm  /usr/share/nginx/html/index.html
 
 COPY index.html /usr/share/nginx/html/index.html
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD [ "nginx", "-g", "daemon off;" ]
