@@ -3,9 +3,7 @@ FROM alpine:3.20
 
 RUN apk update && apk add nginx
 
-WORKDIR /var/www/html
-
-COPY index.html .
+COPY index.html /usr/share/nginx/html/index.html
 
 EXPOSE 80
 
